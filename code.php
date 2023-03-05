@@ -1,69 +1,7 @@
 <?php
 
-function convertNumberToWord($num = false)
-{
-    $num = str_replace(array(',', ' '), '', trim($num));
-    if (!$num) {
-        return false;
-    }
-    $num = (int) $num;
-    $words = array();
-    $list1 = array(
-        "", "bir", "ikki", "uch", "to'rt", "besh", "olti", "etti", "sakkiz", "to'qqiz", "o'n", "o'n bir",
-        "o'n ikki", "o'n uch", "o'n to'rt", "o'n besh", "o'n olti", "o'n etti", "o'n sakkiz", "o'n to'qqiz"
+include('lib/phpqrcode/qrlib.php');
+header('Content-Type: image/png');
 
-    );
-    $list2 = array('', "o'n", "yigirma", "o'ttiz", "qirq", "ellik", "oltmish", "etmish", "sakson", "to'qson", "yuz");
-    $list3 = array(
-        '',
-        'ming',
-        'million',
-        'milliard',
-        'trillion',
-        'quadrillion',
-        'kvintillion',
-        'sekstillion',
-        'septillion',
-        'oktillion',
-        'nonillion',
-        'decillion',
-        'undecillion',
-        'duodecillaon',
-        'tredecillion',
-        'quattuordecillion',
-        'quindecillion',
-        'sexdecillion',
-        'setedecillion',
-        'oktodecillion',
-        'novemdecillion',
-        'vigintillion'
-    );
-    $num_length = strlen($num);
-    $levels = (int) (($num_length + 2) / 3);
-    $max_length = $levels * 3;
-    $num = substr('00' . $num, -$max_length);
-    $num_levels = str_split($num, 3);
-    for ($i = 0; $i < count($num_levels); $i++) {
-        $levels--;
-        $hundreds = (int) ($num_levels[$i] / 100);
-        $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' yuz' . ' ' : '');
-        $tens = (int) ($num_levels[$i] % 100);
-        $singles = '';
-        if ($tens < 20) {
-            $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '');
-        } else {
-            $tens = (int)($tens / 10);
-            $tens = ' ' . $list2[$tens] . ' ';
-            $singles = (int) ($num_levels[$i] % 10);
-            $singles = ' ' . $list1[$singles] . ' ';
-        }
-        $words[] = $hundreds . $tens . $singles . (($levels && (int) ($num_levels[$i])) ? ' ' . $list3[$levels] . ' ' : '');
-    } //end for loop
-    $commas = count($words);
-    if ($commas > 1) {
-        $commas = $commas - 1;
-    }
-    return implode(' ', $words);
-}
 
-echo convertNumberToWord(89689);
+echo QRcode::png('https://idealproject.uz/');

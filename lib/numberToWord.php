@@ -1,74 +1,68 @@
 <?php
-function raqamdanSozga($raqam)
+function convertNumberToWord($num = false)
 {
-    $sozlar = array(
-        0 => '',
-        1 => 'bir',
-        2 => 'ikki',
-        3 => 'uch',
-        4 => 'to\'rt',
-        5 => 'besh',
-        6 => 'olti',
-        7 => 'yetti',
-        8 => 'sakkiz',
-        9 => 'to\'qqiz',
-        10 => 'o\'n',
-        11 => 'o\'n bir',
-        12 => 'o\'n ikki',
-        13 => 'o\'n uch',
-        14 => 'o\'n to\'rt',
-        15 => 'o\'n besh',
-        16 => 'o\'n olti',
-        17 => 'o\'n yetti',
-        18 => 'o\'n sakkiz',
-        19 => 'o\'n to\'qqiz',
-        20 => 'yigirma',
-        30 => 'o\'ttiz',
-        40 => 'qirq',
-        50 => 'ellik',
-        60 => 'oltmish',
-        70 => 'yetmish',
-        80 => 'sakson',
-        90 => 'to\'qson',
-        100 => 'yuz',
-        1000 => 'ming',
-        1000000 => 'million',
-        1000000000 => 'milliard',
-        1000000000000 => 'trillion'
-    );
-
-    if (!is_numeric($raqam)) {
+    $num = str_replace(array(',', ' '), '', trim($num));
+    if (!$num) {
         return false;
     }
+    $num = (int) $num;
+    $words = array();
+    $list1 = array(
+        "", "bir", "ikki", "uch", "to'rt", "besh", "olti", "etti", "sakkiz", "to'qqiz", "o'n", "o'n bir",
+        "o'n ikki", "o'n uch", "o'n to'rt", "o'n besh", "o'n olti", "o'n etti", "o'n sakkiz", "o'n to'qqiz"
 
-    $raqam = (int)$raqam;
-
-    if ($raqam < 0) {
-        return 'minus ' . raqamdanSozga(abs($raqam));
+    );
+    $list2 = array('', "o'n", "yigirma", "o'ttiz", "qirq", "ellik", "oltmish", "etmish", "sakson", "to'qson", "yuz");
+    $list3 = array(
+        '',
+        'ming',
+        'million',
+        'milliard',
+        'trillion',
+        'quadrillion',
+        'kvintillion',
+        'sekstillion',
+        'septillion',
+        'oktillion',
+        'nonillion',
+        'decillion',
+        'undecillion',
+        'duodecillaon',
+        'tredecillion',
+        'quattuordecillion',
+        'quindecillion',
+        'sexdecillion',
+        'setedecillion',
+        'oktodecillion',
+        'novemdecillion',
+        'vigintillion'
+    );
+    $num_length = strlen($num);
+    $levels = (int) (($num_length + 2) / 3);
+    $max_length = $levels * 3;
+    $num = substr('00' . $num, -$max_length);
+    $num_levels = str_split($num, 3);
+    for ($i = 0; $i < count($num_levels); $i++) {
+        $levels--;
+        $hundreds = (int) ($num_levels[$i] / 100);
+        $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' yuz' . ' ' : '');
+        $tens = (int) ($num_levels[$i] % 100);
+        $singles = '';
+        if ($tens < 20) {
+            $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '');
+        } else {
+            $tens = (int)($tens / 10);
+            $tens = ' ' . $list2[$tens] . ' ';
+            $singles = (int) ($num_levels[$i] % 10);
+            $singles = ' ' . $list1[$singles] . ' ';
+        }
+        $words[] = $hundreds . $tens . $singles . (($levels && (int) ($num_levels[$i])) ? ' ' . $list3[$levels] . ' ' : '');
+    } //end for loop
+    $commas = count($words);
+    if ($commas > 1) {
+        $commas = $commas - 1;
     }
-    $soz = '';
-    if ($raqam <= 20) {
-        $soz = $sozlar[$raqam];
-    } elseif ($raqam < 100) {
-        $soz = $sozlar[10 * floor($raqam / 10)];
-        $boshqa = raqamdanSozga($raqam % 10);
-        if ($boshqa) {
-            $soz .= ' ' . $boshqa;
-        }
-    } elseif ($raqam < 1000) {
-        $soz = $sozlar[floor($raqam / 100)] . ' ' . $sozlar[100];
-        $boshqa = raqamdanSozga($raqam % 100);
-        if ($boshqa) {
-            $soz .= ' ' . $boshqa;
-        }
-    } else {
-        foreach (array_reverse($sozlar, true) as $sozraqam => $sozsoz) {
-            if ($sozraqam <= $raqam) {
-                $soz .= raqamdanSozga(floor($raqam / $sozraqam)) . ' ' . $sozsoz . ' ';
-                $raqam %= $sozraqam;
-            }
-        }
-    }
-    return $soz;
+    return implode(' ', $words);
 }
-echo raqamdanSozga('123543');
+
+// echo convertNumberToWord('102452042');
