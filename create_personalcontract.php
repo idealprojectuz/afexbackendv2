@@ -5,7 +5,7 @@ include('lib/numberToWord.php');
 include('lib/numberFormat.php');
 require 'vendor/autoload.php';
 
-function create_personalcontract($firstname, $lastname, $parrentname, $contractnumber, $shorttext, $currentdate, $first_payment, $price_mumber, $region, $district, $birthday, $passportdata, $kimtomonidanberilgan, $berilgansana, $phone, $jshshr, $contract_expire, $addition_notes = null, $kafolat, $yetqazishkuni, $qrcodeurl)
+function create_personalcontract($firstname, $lastname, $parrentname, $contractnumber, $shorttext, $currentdate, $first_payment, $price_mumber, $region, $district, $birthday, $passportdata, $kimtomonidanberilgan, $berilgansana, $phone, $jshshr, $contract_expire, $addition_notes, $kafolat, $yetqazishkuni)
 {
 
     $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor('template.docx');
@@ -38,11 +38,10 @@ function create_personalcontract($firstname, $lastname, $parrentname, $contractn
         ]
     );
     $templateProcessor->setImageValue('qrcode', function () {
-        global $qrcodeurl;
-        QRcode::png($qrcodeurl, 'qrcode.png');
+        QRcode::png('Afex.uz', 'qrcode.png');
         return 'qrcode.png';
     });
-    $pathtoSave = 'order.docx';
+    $pathtoSave = 'order.pdf';
     $templateProcessor->saveAs($pathtoSave);
 }
-create_personalcontract('Hayotbek', "samandarov", "Samandar o'g'li", "AFX-10/30", "Salfetka ishlab chiqarish uskunasi", "4- mart 2023-yil", "50", "102452000", "Navoiy", "Xatirchi", "27.04.2003", "AD0102211", "Xatirchi tumani IIB boshqarmasi", "30.01.2021", "+998900860011", "123123123123123", "31.12.2023", $addition_notes = null, "1 (bir) yil", '90', 'https://afex.uz');
+create_personalcontract("Hayotbek", 'Samandarov', "Samandar o'g'li", "AFX-10/20", "Salfetka ishlab chiqarish uskunasi", "5-mart 2022-yil", "50", "120000000", "navoiy", "xatirchi", "27.04.2003", "27.04.2003", "Xatirchi tumani iib", "31.01.2021", "+998900860011", "1233456123465123", "31.12.2023", "barcha to'lovlar qilinganidan kegin olib ketilishi kerak", "1 (bir) yil", "90");
