@@ -21,7 +21,7 @@ $products = [
 
 @create_personalcontract("Hayotbek", 'Samandarov', "Samandar o'g'li", "AFX-10/20", "Salfetka ishlab chiqarish uskunasi", "5-mart 2022-yil", "50", "120000000", "navoiy", "xatirchi", "27.04.2003", "AD0102211", "Xatirchi tumani iib", "31.01.2021", "+998900860011", "1233456123465123", "31.12.2023", "barcha to'lovlar qilinganidan kegin olib ketilishi kerak", "1 (bir) yil", "90", $products);
 
-function create_personalcontract($firstname, $lastname, $parrentname, $contractnumber, $shorttext, $currentdate, $first_payment, $price_mumber, $region, $district, $birthday, $passportdata, $kimtomonidanberilgan, $berilgansana, $phone, $jshshr, $contract_expire, $addition_notes = null, $kafolat, $yetqazishkuni, $products)
+function create_personalcontract($firstname, $lastname, $parrentname, $contractnumber, $shorttext, $currentdate, $first_payment, $price_mumber, $region, $district, $birthday, $passportdata, $kimtomonidanberilgan, $berilgansana, $phone, $jshshr, $contract_expire, $addition_notes, $kafolat, $yetqazishkuni, $products)
 {
 
     $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor('template.docx');
@@ -37,7 +37,7 @@ function create_personalcontract($firstname, $lastname, $parrentname, $contractn
             'price_numbers' => formatNumber($price_mumber),
             'price_strings' => convertNumberToWord($price_mumber),
             'region' => $region,
-            'district' => $district,
+            'destrict' => $district,
             'birthday' => $birthday,
             'passportdata' => $passportdata,
             'kimtomonidanberilgan' => $kimtomonidanberilgan,
@@ -79,4 +79,15 @@ function create_personalcontract($firstname, $lastname, $parrentname, $contractn
 
     $pathtoSave = 'order.docx';
     $templateProcessor->saveAs($pathtoSave);
+
+    $converter=shell_exec('python3 converter.py');
+    $converter=json_decode($converter, true);
+    if($converter['status']==200)
+    {
+        return true;
+    }
+    else{
+        return false; 
+    }
+   
 };
